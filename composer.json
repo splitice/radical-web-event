@@ -1,0 +1,16 @@
+{
+	"keywords" : [
+		"radical-php"
+	],
+	"autoload" : {
+		"psr-0" : {
+			"Radical" : "src"
+		}
+	},
+	"name" : "splitice/radical-web-event",
+	"type" : "library",
+	"description" : "radical-php",
+	"require" : {
+		"php" : ">=5.4"
+	}
+}
