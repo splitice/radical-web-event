@@ -45,12 +45,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/splitice/radical-common.git",
-                "reference": "56ae78d6f7e93496e1a70e015c918379d8686431"
+                "reference": "3ce1b174cc7fcc1116b4c3b71835f1a6dff28d3b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/splitice/radical-common/zipball/56ae78d6f7e93496e1a70e015c918379d8686431",
-                "reference": "56ae78d6f7e93496e1a70e015c918379d8686431",
+                "url": "https://api.github.com/repos/splitice/radical-common/zipball/3ce1b174cc7fcc1116b4c3b71835f1a6dff28d3b",
+                "reference": "3ce1b174cc7fcc1116b4c3b71835f1a6dff28d3b",
                 "shasum": ""
             },
             "require": {
@@ -68,7 +68,7 @@
             "keywords": [
                 "radical-php"
             ],
-            "time": "2013-12-24 07:34:41"
+            "time": "2013-12-24 10:39:16"
         },
         {
             "name": "splitice/radical-file",
