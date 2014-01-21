@@ -6,6 +6,7 @@ class RedisStorage {
 	const PREFIX = 'radical-event:';
 
 	static function init($host = '127.0.0.1', $port = 6379){
+
 		if(!self::$redis){
 			self::$redis = new \Redis();
 			if(!self::$redis->connect($host, $port)){

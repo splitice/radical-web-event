@@ -13,21 +13,23 @@ class RedisGc implements Interfaces\ICronJob {
 	}
 	
 	function execute(array $arguments){
-		$redis = new \Redis();
-		if(!$redis->connect('127.0.0.1', 6379)){
-			throw new \Exception("Could not connect to Redis server.");
+		if(!RedisStorage::$redis){
+			RedisStorage::init();
 		}
+		$redis = RedisStorage::$redis;
 		
-		$count = $redis->dbSize();
+		$deleted = 0;
+		$index_key = RedisStorage::getIndexKey();
+		$count = $redis->scard($index_key);
 		$keys = array();
 		
-		$index_key = RedisStorage::getIndexKey();
 		foreach($redis->sMembers($index_key) as $k){
 			$k = RedisStorage::PREFIX.$k;
 			$ttl = $redis->ttl($k);
 			if($ttl <= 10){
 				$redis->delete($k);
 				$redis->sRemove($index_key, $k);
+				$deleted++;
 			}else{
 				$keys[$k] = $ttl;
 			}
@@ -42,12 +44,16 @@ class RedisGc implements Interfaces\ICronJob {
 			
 			foreach($keys as $k=>$v){
 				$redis->delete($k);
+				$deleted++;
+				unset($keys[$k]);
 				
 				$its--;
 				if($its <= 0)
 					break;
 			}
 		}
+		
+		echo "$deleted keys deleted - ", count($keys), " remaining out of $count keys.\r\n";
 	}
 	function getName(){
 		return 'Redis';
