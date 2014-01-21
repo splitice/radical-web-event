@@ -5,6 +5,7 @@
 	<buildpathentry kind="con" path="org.eclipse.php.core.LANGUAGE"/>
 	<buildpathentry kind="src" path="src"/>
 	<buildpathentry kind="src" path="vendor/splitice/radical-net/src"/>
+	<buildpathentry kind="src" path="vendor/splitice/radical-cli/src"/>
 	<buildpathentry kind="src" path="vendor/symfony/filesystem"/>
 	<buildpathentry kind="src" path="vendor/splitice/radical-file/src"/>
 	<buildpathentry kind="src" path="vendor/splitice/radical-web/src"/>

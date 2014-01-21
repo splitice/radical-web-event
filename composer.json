@@ -12,7 +12,8 @@
 	"description" : "radical-php",
 	"require" : {
 		"php" : ">=5.4",
-		"splitice/radical-web" : "dev-master"
+		"splitice/radical-web" : "dev-master",
+		"splitice/radical-cli" : "dev-master"
 	},
 	"minimum-stability" : "dev"
 }
