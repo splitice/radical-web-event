@@ -37,7 +37,7 @@ class RedisStorage {
 		self::init();
 		$data = igbinary_serialize($data);
 		$data = gzdeflate($data, 9);
-		$res = self::$redis->set(self::PREFIX.$key, $data, 3600);
+		$res = self::$redis->set(self::PREFIX.$key, $data, 6000);
 		self::$redis->sAdd(self::getIndexKey(), $key);
 		
 		/*$s = self::$redis->get($key);
