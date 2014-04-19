@@ -26,6 +26,13 @@ class RedisGc implements Interfaces\ICronJob {
 		foreach($redis->sMembers($index_key) as $k){
 			$k = RedisStorage::PREFIX.$k;
 			$ttl = $redis->ttl($k);
+			if($ttl == -1){
+				$redis->expire($k, 6000);
+				$ttl = 6000;
+			}else if($ttl == -2){
+				$redis->sRemove($index_key, $k);
+				continue;
+			}
 			if($ttl <= 10){
 				$redis->delete($k);
 				$redis->sRemove($index_key, $k);
@@ -36,7 +43,7 @@ class RedisGc implements Interfaces\ICronJob {
 		}
 		
 		//trim db
-		$targetSize = 25000;
+		$targetSize = isset($arguments[0])?(int)$arguments[0]:100000;
 		if($count > $targetSize){
 			$its = $count - $targetSize;
 	
