@@ -17,31 +17,49 @@ class RedisGc implements Interfaces\ICronJob {
 			RedisStorage::init();
 		}
 		$redis = RedisStorage::$redis;
-		
+
+        $default_ttl = isset($arguments[1])?(int)$arguments[1]:6000;
 		$deleted = 0;
-		$index_key = RedisStorage::getIndexKey();
-		$count = $redis->scard($index_key);
+        $index_key = RedisStorage::getIndexKey();
+        $set_cleanup = array($index_key);
 		$keys = array();
 		
 		foreach($redis->sMembers($index_key) as $k){
-			$k = RedisStorage::PREFIX.$k;
-			$ttl = $redis->ttl($k);
+			$full_key = RedisStorage::PREFIX.$k;
+			$ttl = $redis->ttl($full_key);
 			if($ttl == -1){
-				$redis->expire($k, 6000);
-				$ttl = 6000;
+				if($redis->exists($full_key)){
+                    $redis->expire($full_key, $default_ttl);
+                    $ttl = $default_ttl;
+                }else{
+                    $set_cleanup[] = $k;
+                    continue;
+                }
 			}else if($ttl == -2){
-				$redis->sRemove($index_key, $k);
+                $set_cleanup[] = $k;
 				continue;
 			}
 			if($ttl <= 10){
-				$redis->delete($k);
-				$redis->sRemove($index_key, $k);
+				$redis->delete($full_key);
+                $set_cleanup[] = $k;
 				$deleted++;
 			}else{
 				$keys[$k] = $ttl;
 			}
 		}
-		
+        echo "$deleted keys deleted due to ttl expiry.\r\n";
+
+
+        if(count($set_cleanup) != 1){
+            $ret = call_user_func_array(array($redis,'sRem'),$set_cleanup);
+            if(!$ret){
+                echo "FAILURE: Attempted to remove ",count($set_cleanup)," keys from tracking set due to non-existance / ttl-expire.\r\n";
+            }else{
+                echo count($set_cleanup)," keys removed from tracking set due to non-existance / ttl-expire.\r\n";
+            }
+        }
+
+        $count = $redis->scard($index_key);
 		//trim db
 		$targetSize = isset($arguments[0])?(int)$arguments[0]:100000;
 		if($count > $targetSize){
@@ -50,7 +68,8 @@ class RedisGc implements Interfaces\ICronJob {
 			uasort ($keys, array($this,'cmp'));
 			
 			foreach($keys as $k=>$v){
-				$redis->delete($k);
+				$redis->delete(RedisStorage::PREFIX.$k);
+                $redis->sRem($index_key, $k);
 				$deleted++;
 				unset($keys[$k]);
 				
@@ -58,9 +77,11 @@ class RedisGc implements Interfaces\ICronJob {
 				if($its <= 0)
 					break;
 			}
+
+            echo "$deleted keys deleted to reduce the quantity.\r\n";
 		}
 		
-		echo "$deleted keys deleted - ", count($keys), " remaining out of $count keys.\r\n";
+		echo "total - $deleted keys deleted - ", count($keys), " remaining out of $count keys.\r\n";
 	}
 	function getName(){
 		return 'Redis';
