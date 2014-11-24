@@ -8,6 +8,7 @@ use Radical\Utility\Net\URL;
 
 trait TEventPageBase {
 	protected $eventKey;
+    private static $eventsProcessed = false;
 	
 	protected function _processEvent($post = true){
 		$id = Key::fromRequest($post);
@@ -32,26 +33,30 @@ trait TEventPageBase {
 	 * @see Web\Page\Handler.PageBase::Execute()
 	 */
 	function execute($method = 'GET'){
-		//Check for an event
-		$t = $this;
-		$processed = false;
-		$event_func = function() use($t, $method, &$processed) { 
-			$r = $t->_processEvent($method == 'POST');
-			if($r) {
-				$processed = true;
-				$request = new PageRequest($r);
-				return $request->execute($method);
-			}
-		};
-		
-		if(method_exists($this, 'event_execute')){
-			$r = $this->event_execute($event_func);
-		}else{			
-			$r = $event_func();
-		}
-		
-		if($processed)
-			return $r;
+        if(!self::$eventsProcessed) {
+            self::$eventsProcessed = true;
+
+            //Check for an event
+            $t = $this;
+            $processed = false;
+            $event_func = function () use ($t, $method, &$processed) {
+                $r = $t->_processEvent($method == 'POST');
+                if ($r) {
+                    $processed = true;
+                    $request = new PageRequest($r);
+                    return $request->execute($method);
+                }
+            };
+
+            if (method_exists($this, 'event_execute')) {
+                $r = $this->event_execute($event_func);
+            } else {
+                $r = $event_func();
+            }
+
+            if ($processed)
+                return $r;
+        }
 
 		//Normal execution
 		return parent::Execute($method);
