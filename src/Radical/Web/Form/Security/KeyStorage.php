@@ -53,7 +53,7 @@ class KeyStorage extends CollectionObject {
 			if($key instanceof RedisKey){
 				if(php_sapi_name() != 'cli'){
 					$session_id = isset($_COOKIE["PHPSESSID"])?$_COOKIE["PHPSESSID"]:null;;
-					if($key->session_id != $session_id){
+					if($key->session_id !== null && $key->session_id != $session_id){
 						throw new \Exception("Security Exception, session id does not match");
 					}
 				}
