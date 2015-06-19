@@ -1,8 +1,8 @@
 <?php
 namespace Radical\Web\Form\Security;
 
-use Radical\Web\Session;
 use Radical\Basic\Arr\Object\CollectionObject;
+use Radical\Web\Session;
 
 class KeyStorage extends CollectionObject {
 	const USE_REDIS = true;

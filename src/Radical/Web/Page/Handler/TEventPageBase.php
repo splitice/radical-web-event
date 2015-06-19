@@ -1,10 +1,10 @@
 <?php
 namespace Radical\Web\Page\Handler;
 
-use Radical\Web\Form\Security\KeyStorage;
-use Radical\Web\Form\Security\Key;
-use Radical\Web\Page\Controller\Special\Redirect;
 use Radical\Utility\Net\URL;
+use Radical\Web\Form\Security\Key;
+use Radical\Web\Form\Security\KeyStorage;
+use Radical\Web\Page\Controller\Special\Redirect;
 
 trait TEventPageBase {
 	protected $eventKey;
