@@ -3,6 +3,7 @@ namespace Radical\CLI\Cron\Jobs;
 
 use Radical\CLI\Cron\Jobs\Interfaces;
 use Radical\Web\Form\Security\RedisStorage;
+use Splitice\ResourceFactory;
 
 class RedisGc implements Interfaces\ICronJob {
 	function cmp($a, $b) {
@@ -13,10 +14,7 @@ class RedisGc implements Interfaces\ICronJob {
 	}
 	
 	function execute(array $arguments){
-		if(!RedisStorage::$redis){
-			RedisStorage::init();
-		}
-		$redis = RedisStorage::$redis;
+		$redis = ResourceFactory::getInstance()->get('redis');
 
         $default_ttl = isset($arguments[1])?(int)$arguments[1]:6000;
 		$deleted = 0;

@@ -2,30 +2,21 @@
 namespace Radical\Web\Form\Security;
 
 class RedisStorage {
-    /**
-     * @var \Redis
-     */
-    static $redis;
 	const PREFIX = 'radical-event:';
+    static $redis;
+    /**
+     * @return \Redis
+     */
+    private static function redis(){
+        return \Splitice\ResourceFactory::getInstance()->get('redis');
+    }
 
-	static function init($host = '127.0.0.1', $port = 6379){
-
-		if(!self::$redis){
-			self::$redis = new \Redis();
-			if(!self::$redis->connect($host, $port)){
-				throw new \Exception("Could not connect to Redis server.");
-			}
-				
-		}
-	}
-	
 	static function getIndexKey(){
 		return self::PREFIX.'_index';
 	}
 
 	static function get($key){
-		self::init();
-		$s = self::$redis->get(self::PREFIX.$key);
+		$s = self::redis()->get(self::PREFIX.$key);
 		if(empty($s))
 			return null;
 		
@@ -37,18 +28,18 @@ class RedisStorage {
 	}
 
 	static function set($key, $data){
-		self::init();
+		$redis = self::redis();
 		$data = igbinary_serialize($data);
 		$data = gzdeflate($data, 9);
-		$res = self::$redis->set(self::PREFIX.$key, $data);
-		self::$redis->expire(self::PREFIX.$key, 36000);
-		self::$redis->sAdd(self::getIndexKey(), $key);
+		$res = $redis->set(self::PREFIX.$key, $data);
+        $redis->expire(self::PREFIX.$key, 36000);
+        $redis->sAdd(self::getIndexKey(), $key);
 		
 		/*$s = self::$redis->get($key);
 		$r = igbinary_unserialize($s);
 		die(var_dump($r));*/
 		if(!$res){
-			throw new \Exception("Failed to set key, error: ".self::$redis->getLastError());
+			throw new \Exception("Failed to set key, error: ".$redis->getLastError());
 		}
 	}
 }
