@@ -66,7 +66,7 @@ class RedisGc implements Interfaces\ICronJob {
 			uasort ($keys, array($this,'cmp'));
 			
 			foreach($keys as $k=>$v){
-				$redis->delete(RedisStorage::PREFIX.$k);
+				$redis->del(RedisStorage::PREFIX.$k);
                 $redis->sRem($index_key, $k);
 				$deleted++;
 				unset($keys[$k]);

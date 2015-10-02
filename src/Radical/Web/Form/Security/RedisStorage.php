@@ -2,8 +2,27 @@
 namespace Radical\Web\Form\Security;
 
 class RedisStorage {
+	const COMPRESSION_LEVEL = 6;
 	const PREFIX = 'radical-event:';
+	const EXPIRATION_TIME = 14400;//4h
     static $redis;
+
+	private static function serialize($o){
+		static $igbinary = extension_loaded('igbinary');
+		if($igbinary) {
+			return igbinary_serialize($o);
+		}
+		return serialize($o);
+	}
+
+	private static function unserialize($o){
+		static $igbinary = extension_loaded('igbinary');
+		if($igbinary) {
+			return igbinary_unserialize($o);
+		}
+		return unserialize($o);
+	}
+
     /**
      * @return \Redis
      */
@@ -24,15 +43,15 @@ class RedisStorage {
 		if(empty($e2) || $e2 === false){
 			$e2 = $s;
 		}
-		return igbinary_unserialize($e2);
+		return self::unserialize($e2);
 	}
 
 	static function set($key, $data){
 		$redis = self::redis();
-		$data = igbinary_serialize($data);
-		$data = gzdeflate($data, 9);
+		$data = self::serialize($data);
+		$data = gzdeflate($data, self::COMPRESSION_LEVEL);
 		$res = $redis->set(self::PREFIX.$key, $data);
-        $redis->expire(self::PREFIX.$key, 36000);
+        $redis->expire(self::PREFIX.$key, self::EXPIRATION_TIME);
         $redis->sAdd(self::getIndexKey(), $key);
 		
 		/*$s = self::$redis->get($key);
