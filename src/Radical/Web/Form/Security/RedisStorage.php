@@ -8,7 +8,7 @@ class RedisStorage {
     static $redis;
 
 	private static function serialize($o){
-		static $igbinary = extension_loaded('igbinary');
+		$igbinary = extension_loaded('igbinary');
 		if($igbinary) {
 			return igbinary_serialize($o);
 		}
@@ -16,7 +16,7 @@ class RedisStorage {
 	}
 
 	private static function unserialize($o){
-		static $igbinary = extension_loaded('igbinary');
+		$igbinary = extension_loaded('igbinary');
 		if($igbinary) {
 			return igbinary_unserialize($o);
 		}
