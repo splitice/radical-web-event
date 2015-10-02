@@ -5,18 +5,21 @@ use Radical\Basic\Arr\Object\CollectionObject;
 use Radical\Web\Session;
 
 class KeyStorage extends CollectionObject {
-	const USE_REDIS = true;
+	const USE_REDIS = true;//TODO: cleanup
 	
 	private function redis_key(Key $key){
 		return 'ks_'.$key->getId();
 	}
-	function Add(Key $key){
+
+	/**
+	 * @param Key $key
+	 * @return bool
+	 * @throws \Exception
+	 */
+	function Add($key){
 		$data = $key;
 		if(self::USE_REDIS){
 			throw new \Exception("This should never happen if Redis is in use");
-			/*$redis = new \Redis\Store($this->redis_key($key));
-			$redis->set($data);
-			$data = $redis;*/
 		}
 		$ret = parent::Add($key->getId(),$data);
 		Session::$data['form_security'] = $this;
