@@ -7,25 +7,6 @@ use Radical\Web\Session;
 class KeyStorage extends CollectionObject {
 	const USE_REDIS = true;//TODO: cleanup
 	
-	private function redis_key(Key $key){
-		return 'ks_'.$key->getId();
-	}
-
-	/**
-	 * @param Key $key
-	 * @return bool
-	 * @throws \Exception
-	 */
-	function Add($key){
-		$data = $key;
-		if(self::USE_REDIS){
-			throw new \Exception("This should never happen if Redis is in use");
-		}
-		$ret = parent::Add($key->getId(),$data);
-		Session::$data['form_security'] = $this;
-		return $ret;
-	}
-	
 	static function AddKey(Key $key){
 		if(self::USE_REDIS){
 			RedisStorage::set($key->getId(), $key);
@@ -36,11 +17,15 @@ class KeyStorage extends CollectionObject {
 			
 			if($data instanceof \Radical\Web\Session\Storage\Internal)
 				$data->refresh();
-			
+
+			$temp = null;
 			if(!isset(Session::$data['form_security'])){
-				$data['form_security'] = new static();
+				$temp = new static();
+			}else{
+				$temp = $data['form_security'];
 			}
-			$data['form_security']->Add($key);
+			$temp->Add($key->getId(), $key);
+			$data['form_security'] = $temp;
 	
 			$data->lock_close();
 		}
