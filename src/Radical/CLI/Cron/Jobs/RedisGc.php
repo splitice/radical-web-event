@@ -38,7 +38,7 @@ class RedisGc implements Interfaces\ICronJob {
 				continue;
 			}
 			if($ttl <= 10){
-				$redis->delete($full_key);
+				$redis->del($full_key);
                 $set_cleanup[] = $k;
 				$deleted++;
 			}else{
