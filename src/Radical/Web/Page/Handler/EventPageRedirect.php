@@ -61,7 +61,7 @@ class EventPageRedirect extends PageBase {
         return $this->GET();
     }
 	
-	function Execute(){
+	function Execute($method='GET'){
 		return $this->object->{$this->method}($this->data,Key::getData(false));
 	}
 }
