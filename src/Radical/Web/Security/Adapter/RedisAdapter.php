@@ -20,14 +20,14 @@ class RedisAdapter implements ISecurityAdapter
 	function __construct(\Predis\Client $client = null)
 	{
 		if($client === null){
-			$this->client = \Splitice\ResourceFactory::getInstance()->get('redis');
+			$client = \Splitice\ResourceFactory::getInstance()->get('redis');
 		}
 		$this->client = $client;
 	}
 
 	function get($key)
 	{
-		$this->client->get(self::PREFIX.$key);
+		$s = $this->client->get(self::PREFIX.$key);
 		if(empty($s))
 			return null;
 
