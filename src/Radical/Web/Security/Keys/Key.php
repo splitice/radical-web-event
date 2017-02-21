@@ -12,9 +12,9 @@ class Key {
 	public $expires = -1;
 	
 	function __construct($callback = null,$ttl = -1){
+		$this->id = \Radical\Basic\String\Random::GenerateBase64(48).dechex(crc32(session_id()));
 		//Maximum entropy, minimum data
-		$this->id = \Radical\Basic\String\Random::GenerateBase64(6).dechex(crc32(session_id().time()));
-		$len = strlen($this->id) - rand(0,4);
+		$len = strlen($this->id) - rand(0,16);
 		$this->id = substr($this->id,0,$len);
 		
 		$this->key = \Radical\Basic\String\Random::GenerateBytes(32);
