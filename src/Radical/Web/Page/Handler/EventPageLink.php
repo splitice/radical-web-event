@@ -1,8 +1,9 @@
 <?php
 namespace Radical\Web\Page\Handler;
 
-use Radical\Web\Form\Security\Key;
-use Radical\Web\Form\Security\KeyStorage;
+use Radical\Web\Security\Adapter\ISecurityAdapter;
+use Radical\Web\Security\Key;
+use Radical\Web\Security\KeyStorage;
 
 class EventPageLink {
 	const EVENT_HANDLER = '__rp_eventA';
@@ -32,7 +33,9 @@ class EventPageLink {
 	function data($query_params = array()){
 		//Build security field
 		if($this->securityField === null){
-			$this->securityField = KeyStorage::newKey(array($this,'Execute'));
+			/** @var ISecurityAdapter $storage */
+			$storage = \Splitice\ResourceFactory::getInstance()->get('event_storage');
+			$this->securityField = $storage->newKey(array($this,'Execute'));
 			$this->eHandler = $this->securityField->Store(serialize($this->object));
 			$this->eMethod = base64_encode($this->securityField->Encrypt($this->method));
 		}

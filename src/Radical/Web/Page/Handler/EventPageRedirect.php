@@ -1,8 +1,9 @@
 <?php
 namespace Radical\Web\Page\Handler;
 
-use Radical\Web\Form\Security\Key;
-use Radical\Web\Form\Security\KeyStorage;
+use Radical\Web\Security\Adapter\ISecurityAdapter;
+use Radical\Web\Security\Key;
+use Radical\Web\Security\KeyStorage;
 use Radical\Web\Page\Controller\Special\Redirect;
 
 class EventPageRedirect extends PageBase {
@@ -29,7 +30,9 @@ class EventPageRedirect extends PageBase {
 	private function data($query_params = array()){
 		//Build security field
 		if($this->securityField === null){
-			$this->securityField = KeyStorage::newKey(array($this,'Execute'));
+			/** @var ISecurityAdapter $storage */
+			$storage = \Splitice\ResourceFactory::getInstance()->get('event_storage');
+			$this->securityField = $storage->newKey(array($this,'Execute'));
 			$this->eHandler = $this->securityField->Store(serialize($this->object));
 			$this->eMethod = base64_encode($this->securityField->Encrypt($this->method));
 		}

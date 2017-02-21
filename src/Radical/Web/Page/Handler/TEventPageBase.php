@@ -2,8 +2,9 @@
 namespace Radical\Web\Page\Handler;
 
 use Radical\Utility\Net\URL;
-use Radical\Web\Form\Security\Key;
-use Radical\Web\Form\Security\KeyStorage;
+use Radical\Web\Security\Adapter\ISecurityAdapter;
+use Radical\Web\Security\Key;
+use Radical\Web\Security\KeyStorage;
 use Radical\Web\Page\Controller\Special\Redirect;
 
 trait TEventPageBase {
@@ -13,7 +14,9 @@ trait TEventPageBase {
 	protected function _processEvent($post = true){
 		$id = Key::fromRequest($post);
 		if(!empty($id)){
-			$key = KeyStorage::GetKey($id);
+			/** @var ISecurityAdapter $storage */
+			$storage = \Splitice\ResourceFactory::getInstance()->get('event_storage');
+			$key = $storage->get($id);
 			if($key){
 				$this->eventKey = $key;
 				$result = $key->Callback();
