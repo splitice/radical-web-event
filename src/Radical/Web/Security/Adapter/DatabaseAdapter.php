@@ -2,35 +2,31 @@
 namespace Radical\Web\Security\Adapter;
 
 
+use Radical\Database\Model\TableReferenceInstance;
 use Radical\Web\Security\Internal\BestSerialization;
 use Radical\Web\Security\Keys\Key;
 use Radical\Web\Security\Keys\SessionKey;
 
-class RedisAdapter implements ISecurityAdapter
+class DatabaseAdapter implements ISecurityAdapter
 {
 	const COMPRESSION_LEVEL = 6;
-	const PREFIX = 'radical-event:';
-	const EXPIRATION_TIME = 14400;//4h
+	const EXPIRATION_TIME = 14400;
 
-	/**
-	 * @var \Predis\Client
-	 */
-	private $client;
+	/** @var TableReferenceInstance $instance */
+	private $instance;
 
-	function __construct(\Predis\Client $client = null)
+	function __construct(TableReferenceInstance $instance)
 	{
-		if($client === null){
-			$this->client = \Splitice\ResourceFactory::getInstance()->get('redis');
-		}
-		$this->client = $client;
+		$this->instance = $instance;
 	}
 
 	function get($key)
 	{
-		$this->client->get(self::PREFIX.$key);
-		if(empty($s))
+		$d = $this->instance->fromId($key);
+		if(!$d)
 			return null;
 
+		$s = $d->getData();
 		$e2 = @gzinflate($s);
 		if(empty($e2)){
 			return null;
@@ -53,7 +49,12 @@ class RedisAdapter implements ISecurityAdapter
 	{
 		$data = BestSerialization::serialize($key);
 		$data = gzdeflate($data, self::COMPRESSION_LEVEL);
-		$this->client->setex(self::PREFIX.$key->getId(), self::EXPIRATION_TIME, $data);
+
+		$ins = $this->instance->getNew();
+		$ins->setId($key->getId());
+		$ins->setData($data);
+		$ins->setExpires(\Radical\DB::toTimeStamp(time() + self::EXPIRATION_TIME));
+		$ins->insert();
 	}
 
 	function newKey($call, $ttl = -1)
