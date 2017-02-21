@@ -2,8 +2,7 @@
 namespace Radical\Web\Page\Handler;
 
 use Radical\Web\Security\Adapter\ISecurityAdapter;
-use Radical\Web\Security\Key;
-use Radical\Web\Security\KeyStorage;
+use Radical\Web\Security\Keys\Key;
 
 class EventPageLink {
 	const EVENT_HANDLER = '__rp_eventA';

@@ -1,9 +1,9 @@
 <?php
-namespace Radical\Web\Security;
+namespace Radical\Web\Security\Keys;
 
 use Radical\Web\Session;
 
-class RedisKey extends Key {
+class SessionKey extends Key {
 	public $session_id;
 	
 	function __construct($callback = null,$ttl = -1){

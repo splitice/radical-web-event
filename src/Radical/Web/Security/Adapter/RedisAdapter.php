@@ -3,8 +3,8 @@ namespace Radical\Web\Security\Adapter;
 
 
 use Radical\Web\Security\Internal\BestSerialization;
-use Radical\Web\Security\Key;
-use Radical\Web\Security\RedisKey;
+use Radical\Web\Security\Keys\Key;
+use Radical\Web\Security\Keys\SessionKey;
 use Radical\Web\Session;
 
 class RedisAdapter implements ISecurityAdapter
@@ -59,7 +59,7 @@ class RedisAdapter implements ISecurityAdapter
 
 	function newKey($call, $ttl = -1)
 	{
-		$ret = new RedisKey($call, $ttl);
+		$ret = new SessionKey($call, $ttl);
 		$this->add($ret);
 		return $ret;
 	}

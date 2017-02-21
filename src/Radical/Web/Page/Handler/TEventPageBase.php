@@ -3,8 +3,7 @@ namespace Radical\Web\Page\Handler;
 
 use Radical\Utility\Net\URL;
 use Radical\Web\Security\Adapter\ISecurityAdapter;
-use Radical\Web\Security\Key;
-use Radical\Web\Security\KeyStorage;
+use Radical\Web\Security\Keys\Key;
 use Radical\Web\Page\Controller\Special\Redirect;
 
 trait TEventPageBase {

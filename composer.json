@@ -14,6 +14,7 @@
 		"php" : ">=5.4",
 		"splitice/radical-web" : "dev-master",
 		"splitice/radical-cli" : "dev-master",
+		"splitice/radical-db" : "dev-master",
         "splitice/resource-factory" : "dev-master",
 		"predis/predis" : "~1.0"
 	},

@@ -1,5 +1,5 @@
 <?php
-namespace Radical\Web\Security;
+namespace Radical\Web\Security\Keys;
 
 use Radical\Basic\Cryptography\Blowfish;
 

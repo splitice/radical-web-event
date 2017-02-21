@@ -2,7 +2,7 @@
 namespace Radical\Web\Security\Adapter;
 
 
-use Radical\Web\Security\Key;
+use Radical\Web\Security\Keys\Key;
 
 interface ISecurityAdapter
 {
