@@ -12,12 +12,12 @@ class Key {
 	public $expires = -1;
 	
 	function __construct($callback = null,$ttl = -1){
-		$this->id = \Radical\Basic\String\Random::GenerateBase64(48).dechex(crc32(session_id()));
+		$this->id = \Radical\Basic\StringHelper\Random::GenerateBase64(48).dechex(crc32(session_id()));
 		//Maximum entropy, minimum data
 		$len = strlen($this->id) - rand(0,16);
 		$this->id = substr($this->id,0,$len);
 		
-		$this->key = \Radical\Basic\String\Random::GenerateBytes(32);
+		$this->key = \Radical\Basic\StringHelper\Random::GenerateBytes(32);
 		$this->callback = $callback;
 		if($ttl > 0) $this->expires = $ttl + time();
 	}
