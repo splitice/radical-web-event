@@ -20,20 +20,21 @@ class SessionAdapter implements ISecurityAdapter
 		$data = Session::$data;
 
 		$data->lock_open();
+        try {
+            if ($data instanceof \Radical\Web\Session\Storage\Internal)
+                $data->refresh();
 
-		if($data instanceof \Radical\Web\Session\Storage\Internal)
-			$data->refresh();
-
-		$temp = null;
-		if(!isset(Session::$data['form_security'])){
-			$temp = new static();
-		}else{
-			$temp = $data['form_security'];
-		}
-		$temp->Add($key->getId(), $key);
-		$data['form_security'] = $temp;
-
-		$data->lock_close();
+            $temp = null;
+            if (!isset(Session::$data['form_security'])) {
+                $temp = new static();
+            } else {
+                $temp = $data['form_security'];
+            }
+            $temp->Add($key->getId(), $key);
+            $data['form_security'] = $temp;
+        }finally {
+            $data->lock_close();
+        }
 	}
 
 	function newKey($call, $ttl = -1)

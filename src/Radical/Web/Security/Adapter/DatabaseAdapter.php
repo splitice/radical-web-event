@@ -10,7 +10,7 @@ use Radical\Web\Security\Keys\SessionKey;
 class DatabaseAdapter implements ISecurityAdapter
 {
 	const COMPRESSION_LEVEL = 6;
-	const EXPIRATION_TIME = 14400;
+	const EXPIRATION_TIME = 60*60*12;
 
 	/** @var TableReferenceInstance $instance */
 	private $instance;
